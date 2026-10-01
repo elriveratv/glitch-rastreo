@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/rastreo", "destination": "/rastreo.html" },
+    { "source": "/seguimiento", "destination": "/rastreo.html" }
+  ]
+}
