@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Rastreo | GlitchLAB</title>
+  
+  <!-- Favicon Oficial GlitchLab -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
+
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Generador QR y PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    /* Pulso Electrocardiograma Debajo del Logo (Idéntico al estilo del Sistema) */
+    .logo-ecg-container {
+      width: 100%;
+      height: 15px;
+      margin: -2px auto 0 auto;
+      overflow: visible;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+    }
+    .logo-ecg-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .logo-ecg-pulse {
+      stroke-dasharray: 40 1000;
+      stroke-dashoffset: 40;
+      opacity: 0;
+      animation: logo-ecg-beat 5s linear infinite;
+      filter: drop-shadow(0 0 3px #00ffff) drop-shadow(0 0 7px #0ea5e9);
+    }
+    @keyframes logo-ecg-beat {
+      0% {
+        stroke-dashoffset: 40;
+        opacity: 0;
+      }
+      1% {
+        stroke-dashoffset: 40;
+        opacity: 1;
+      }
+      20% {
+        stroke-dashoffset: -230;
+        opacity: 1;
+      }
+      21% {
+        stroke-dashoffset: -230;
+        opacity: 0;
+      }
+      22% {
+        stroke-dashoffset: 40;
+        opacity: 0;
+      }
+      100% {
+        stroke-dashoffset: 40;
+        opacity: 0;
+      }
+    }
+    .logo-ecg-spark {
+      opacity: 0;
+      transform-origin: 104px 1.5px;
+      animation: logo-ecg-spark-flash 5s linear infinite;
+    }
+    @keyframes logo-ecg-spark-flash {
+      0%, 8.5% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      10.5% {
+        opacity: 1;
+        transform: scale(1.6);
+        filter: drop-shadow(0 0 4px #ffffff) drop-shadow(0 0 8px #00ffff) drop-shadow(0 0 12px #ec4899);
+      }
+      13% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+    }
+
+    /* Glows & Gradients */
+    .glow-cyan {
+      box-shadow: 0 0 30px -5px rgba(14, 165, 233, 0.25);
+    }
+    .glow-card {
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body class="min-h-full bg-[#070c18] text-slate-100 flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- Header Superior (Barra Superior Destacada) -->
+  <header class="bg-[#0e172a]/95 backdrop-blur-md sticky top-0 z-30 border-b border-sky-950/60 shadow-lg shadow-black/25">
+    <div class="max-w-4xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Brand Logo Oficial GlitchLab con Pulso ECG Centrado (Exacto al Sistema) -->
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <a href="rastreo.html" class="flex flex-col items-center justify-center select-none w-fit group">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-microchip text-sky-400 text-xl sm:text-3xl group-hover:scale-105 transition-transform flex-shrink-0"></i>
+            <span class="font-black text-lg sm:text-2xl tracking-wider whitespace-nowrap text-white">Glitch<span class="text-sky-400">Lab</span></span>
+          </div>
+          <!-- Pulso Electrocardiograma Animado Centrado -->
+          <div class="logo-ecg-container">
+            <svg class="logo-ecg-svg" viewBox="0 0 200 24" preserveAspectRatio="none" style="overflow: visible;">
+              <path d="M 0,12 L 55,12 C 62,12 65,9.5 68,9.5 C 71,9.5 74,12 79,12 L 92,12 L 97,15 L 104,3.5 L 111,20.5 L 117,10.5 L 122,12 L 132,12 C 139,12 144,8.5 150,8.5 C 156,8.5 161,12 168,12 L 200,12" fill="none" stroke="rgba(14, 165, 233, 0.25)" stroke-width="1.3" pathLength="230"></path>
+              <path class="logo-ecg-pulse" d="M 0,12 L 55,12 C 62,12 65,9.5 68,9.5 C 71,9.5 74,12 79,12 L 92,12 L 97,15 L 104,3.5 L 111,20.5 L 117,10.5 L 122,12 L 132,12 C 139,12 144,8.5 150,8.5 C 156,8.5 161,12 168,12 L 200,12" fill="none" stroke="#00ffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="230"></path>
+              <circle class="logo-ecg-spark" cx="104" cy="3.5" r="2.2" fill="#ffffff"></circle>
+            </svg>
+          </div>
+        </a>
+        <span class="hidden md:inline-block px-2.5 py-1 rounded-full bg-sky-950/80 text-sky-300 border border-sky-800/80 text-[10px] font-bold uppercase tracking-wider">
+          Portal de Rastreo
+        </span>
+      </div>
+
+      <!-- Botón de Contacto Directo WhatsApp -->
+      <a 
+        id="btnHeaderWhatsApp" 
+        href="https://wa.me/523113396969" 
+        target="_blank" 
+        class="px-2.5 sm:px-3.5 py-1.5 rounded-full bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 shadow flex-shrink-0"
+      >
+        <i class="fab fa-whatsapp text-sm text-emerald-400"></i>
+        <span class="hidden sm:inline">WhatsApp Taller:</span>
+        <span class="whitespace-nowrap">311 339 6969</span>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+
+    <!-- Tarjeta de Bienvenida y Buscador -->
+    <section class="bg-gradient-to-b from-slate-900/90 to-[#0b101e]/90 border border-slate-800/90 rounded-3xl p-4 sm:p-7 glow-card">
+      <div class="text-center max-w-xl mx-auto space-y-2.5 sm:space-y-3 mb-5 sm:mb-6">
+        
+        <!-- Logo GlitchLab Central con ECG Pulso -->
+        <div class="flex flex-col items-center justify-center pt-1 pb-1">
+          <!-- Contenedor ajustado exactamente al ancho del logo y texto -->
+          <div class="inline-flex flex-col items-center w-fit">
+            <div class="inline-flex items-center gap-2">
+              <i class="fas fa-microchip text-sky-400 text-2xl sm:text-4xl"></i>
+              <span class="font-bold text-2xl sm:text-4xl tracking-wider text-white">Glitch<span class="text-sky-400">Lab</span></span>
+            </div>
+            <!-- Pulso ECG Central de borde a borde exacto del logo y texto -->
+            <div class="w-full h-3.5 sm:h-4 mt-1 overflow-visible pointer-events-none">
+              <svg class="w-full h-full block" viewBox="0 0 200 24" preserveAspectRatio="none" style="overflow: visible;">
+                <path d="M 0,12 L 55,12 C 62,12 65,9.5 68,9.5 C 71,9.5 74,12 79,12 L 92,12 L 97,15 L 104,3.5 L 111,20.5 L 117,10.5 L 122,12 L 132,12 C 139,12 144,8.5 150,8.5 C 156,8.5 161,12 168,12 L 200,12" fill="none" stroke="rgba(14, 165, 233, 0.25)" stroke-width="1.3" pathLength="230"></path>
+                <path class="logo-ecg-pulse" d="M 0,12 L 55,12 C 62,12 65,9.5 68,9.5 C 71,9.5 74,12 79,12 L 92,12 L 97,15 L 104,3.5 L 111,20.5 L 117,10.5 L 122,12 L 132,12 C 139,12 144,8.5 150,8.5 C 156,8.5 161,12 168,12 L 200,12" fill="none" stroke="#00ffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" pathLength="230"></path>
+                <circle class="logo-ecg-spark" cx="104" cy="3.5" r="2.2" fill="#ffffff"></circle>
+              </svg>
+            </div>
+          </div>
+          <p class="text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold text-slate-400 mt-2 px-2 text-center">Laboratorio Especializado en Microelectrónica</p>
+        </div>
+
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[11px] sm:text-xs font-bold">
+          <i class="fas fa-shield-halved text-sky-400"></i>
+          <span>Rastreo Seguro de Equipos en Tiempo Real</span>
+        </div>
+        <h1 class="text-lg sm:text-2xl font-black text-white tracking-tight leading-snug">
+          Consulta el Estatus de tu Dispositivo
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-400 leading-relaxed px-1">
+          Por privacidad y seguridad, ingresa los <strong class="text-sky-300">10 dígitos de tu teléfono registrado</strong> en recepción para consultar el diagnóstico, fotos de laboratorio y avance técnico.
+        </p>
+      </div>
+
+      <!-- Formulario de Consulta por Teléfono -->
+      <form id="trackingForm" onsubmit="handleSearch(event)" class="max-w-xl mx-auto flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-sky-400 text-xs"></i>
+          <input 
+            type="tel" 
+            id="inputFolio" 
+            placeholder="Ingresa tu teléfono a 10 dígitos (ej: 3111234567)..." 
+            maxlength="14"
+            class="w-full pl-10 pr-4 py-3 bg-slate-950/90 border border-slate-700/80 rounded-2xl text-sm font-semibold text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition shadow-inner font-mono tracking-wide"
+            required
+            autocomplete="tel"
+          >
+        </div>
+        <button 
+          type="submit" 
+          id="btnSearch"
+          class="px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-sky-500/25 transition flex items-center justify-center gap-2 active:scale-95"
+        >
+          <i class="fas fa-magnifying-glass"></i>
+          <span>Consultar</span>
+        </button>
+      </form>
+      <!-- Botones de Teléfonos Recientes Guardados en este Dispositivo -->
+      <div id="recentOrdersContainer" class="hidden max-w-xl mx-auto pt-3 flex flex-wrap items-center justify-center gap-2 text-xs">
+        <span class="text-[11px] text-slate-500 font-semibold"><i class="fas fa-clock-rotate-left mr-1"></i>Consultas recientes:</span>
+        <div id="recentOrdersChips" class="flex flex-wrap items-center gap-1.5"></div>
+      </div>
+    </section>
+
+    <!-- Indicador de Carga -->
+    <div id="loadingState" class="hidden text-center py-12 space-y-3">
+      <div class="w-10 h-10 border-4 border-sky-500/20 border-t-sky-400 rounded-full animate-spin mx-auto"></div>
+      <p class="text-xs text-slate-400 font-medium">Verificando número en la base de datos de GlitchLab...</p>
+    </div>
+
+    <!-- Selector de Órdenes si el Teléfono tiene Múltiples Equipos -->
+    <div id="multiOrdersState" class="hidden bg-[#0b101e] border border-sky-500/40 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4 glow-card">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            <i class="fas fa-laptop-medical text-sky-400"></i> Equipos Registrados con tu Número
+          </h3>
+          <p class="text-xs text-slate-400">Tienes más de un equipo en taller. Selecciona cuál deseas revisar:</p>
+        </div>
+        <span id="multiOrdersCount" class="text-xs font-mono font-bold text-sky-400 bg-sky-950 px-2.5 py-1 rounded-full border border-sky-800"></span>
+      </div>
+      <div id="multiOrdersList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </div>
+
+    <!-- Mensaje de Orden No Encontrada -->
+    <div id="notFoundState" class="hidden p-6 sm:p-8 bg-red-950/20 border border-red-500/40 rounded-3xl text-center space-y-3">
+      <div class="w-12 h-12 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center text-xl mx-auto">
+        <i class="fas fa-phone-slash"></i>
+      </div>
+      <h3 id="notFoundTitle" class="text-base font-bold text-white">No encontramos equipos con este número telefónico</h3>
+      <p id="notFoundDesc" class="text-xs text-slate-400 max-w-md mx-auto">
+        Por seguridad, el portal solicita los <strong>10 dígitos de tu teléfono celular</strong> registrado al entregar tu equipo en GlitchLab.
+      </p>
+      <div class="pt-2">
+        <a 
+          href="https://wa.me/523113396969?text=Hola%20GlitchLab,%20tengo%20duda%20con%20el%20rastreo%20de%20mi%20equipo." 
+          target="_blank"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-emerald-400 transition"
+        >
+          <i class="fab fa-whatsapp"></i> Contactar al Laboratorio por WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <!-- RESULTADO DEL RASTREO (Se activa al encontrar la orden) -->
+    <div id="resultContainer" class="hidden space-y-5">
+      
+      <!-- Barra Superior de Acciones Rápidas (PDF + Auto-Refresh) -->
+      <div class="flex flex-wrap items-center justify-between gap-2.5 px-1">
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-[11px]">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span id="liveStatusText">Actualización en vivo activada</span>
+          </span>
+          <span id="lastUpdatedTime" class="text-[10px] text-slate-500 font-mono hidden sm:inline"></span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button 
+            type="button" 
+            onclick="refreshCurrentOrder()" 
+            id="btnManualRefresh"
+            class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 hover:text-white border border-slate-800 text-xs font-bold transition flex items-center gap-1.5 active:scale-95" 
+            title="Refrescar estado ahora"
+          >
+            <i id="refreshIcon" class="fas fa-rotate"></i>
+            <span>Actualizar</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="downloadClientDigitalPDF()" 
+            class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 text-white text-xs font-bold shadow-md shadow-sky-500/20 transition flex items-center gap-1.5 active:scale-95"
+            title="Descargar comprobante digital para tu celular"
+          >
+            <i class="fas fa-file-pdf"></i>
+            <span>Descargar Comprobante</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Encabezado de la Orden: Folio, Cliente, Fecha y Estado -->
+      <div id="orderHeaderCard" class="bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 sm:p-6 glow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="font-mono text-2xl font-black text-white tracking-tight">
+              Orden #<span id="dtlFolio" class="text-sky-400">1</span>
+            </span>
+            <div id="dtlStatusBadge"></div>
+          </div>
+          <p class="text-xs text-slate-300 mt-1">
+            Cliente: <strong id="dtlClientName" class="text-white uppercase"></strong>
+          </p>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Ingreso al Taller: <span id="dtlDate" class="text-slate-200 font-medium"></span>
+          </p>
+          <div class="flex items-center gap-2 flex-wrap mt-1">
+            <span id="dtlWorkshopStayBadge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-900 text-sky-400 border border-slate-800"></span>
+            <span id="dtlDeliveredDateBadge" class="hidden inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-800/60"></span>
+          </div>
+        </div>
+
+        <div class="sm:text-right">
+          <p class="text-[11px] text-slate-400">Especialista a Cargo:</p>
+          <p id="dtlTechnician" class="text-xs font-bold text-sky-300">Ing. Rivera</p>
+          <div id="dtlWarrantyBadge" class="mt-1"></div>
+        </div>
+      </div>
+
+      <!-- Stepper / Línea de Tiempo de Progreso Visual -->
+      <div class="bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i class="fas fa-list-check text-sky-400"></i> Progreso de la Reparación
+          </h3>
+          <span id="dtlProgressPercent" class="text-xs font-mono font-bold text-sky-400">60%</span>
+        </div>
+
+        <!-- Barra de Progreso Visual -->
+        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+          <div id="dtlProgressBar" class="bg-gradient-to-r from-sky-500 to-emerald-400 h-full rounded-full transition-all duration-700" style="width: 60%"></div>
+        </div>
+
+        <!-- 5 Pasos -->
+        <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center pt-2">
+          
+          <div id="step-received" class="flex flex-col items-center gap-1.5">
+            <div class="step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">
+              <i class="fas fa-inbox"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-medium text-slate-400">Recibido</span>
+          </div>
+
+          <div id="step-diagnostic" class="flex flex-col items-center gap-1.5">
+            <div class="step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-medium text-slate-400">Diagnóstico</span>
+          </div>
+
+          <div id="step-in_progress" class="flex flex-col items-center gap-1.5">
+            <div class="step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">
+              <i class="fas fa-screwdriver-wrench"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-medium text-slate-400">Reparación</span>
+          </div>
+
+          <div id="step-ready" class="flex flex-col items-center gap-1.5">
+            <div class="step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">
+              <i class="fas fa-circle-check"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-medium text-slate-400">Listo</span>
+          </div>
+
+          <div id="step-delivered" class="flex flex-col items-center gap-1.5">
+            <div class="step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 transition-all">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <span class="text-[10px] sm:text-xs font-medium text-slate-400">Entregado</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Dispositivo, Falla Reportada y Diagnóstico del Laboratorio -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Tarjeta de Dispositivo -->
+        <div class="bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 space-y-3">
+          <div class="flex items-center gap-2 text-sky-400 text-xs font-bold uppercase tracking-wider">
+            <i class="fas fa-laptop"></i> Datos del Dispositivo
+          </div>
+          <div>
+            <h4 id="dtlEquipmentTitle" class="text-base font-extrabold text-white">Laptop ASUS</h4>
+            <p id="dtlEquipmentSerial" class="text-xs font-mono text-slate-400 mt-0.5">S/N: N/A</p>
+          </div>
+          <div class="p-3 bg-slate-950/80 rounded-2xl border border-slate-800 text-xs space-y-1">
+            <span class="text-slate-400 block text-[11px] font-semibold">Accesorios dejados en recepción:</span>
+            <p id="dtlAccessories" class="text-slate-200 font-medium italic">Solo equipo</p>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Falla & Diagnóstico -->
+        <div class="bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 space-y-3">
+          <div class="flex items-center gap-2 text-sky-400 text-xs font-bold uppercase tracking-wider">
+            <i class="fas fa-stethoscope"></i> Falla & Diagnóstico Técnico
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[11px] font-semibold">Falla Reportada por el Cliente:</span>
+            <p id="dtlIssue" class="text-xs text-slate-200 font-medium mt-0.5"></p>
+          </div>
+          <div class="p-3 bg-sky-950/20 rounded-2xl border border-sky-500/20 text-xs space-y-1">
+            <span class="text-sky-300 block text-[11px] font-bold">Diagnóstico Oficial de Laboratorio:</span>
+            <p id="dtlDiagnosis" class="text-slate-200 font-medium"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Checklist Funcional de Recepción & Mediciones de Microelectrónica -->
+      <div id="receptionDetailsCard" class="hidden bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 text-sky-400 text-xs font-bold uppercase tracking-wider">
+            <i class="fas fa-clipboard-check"></i> Pruebas Preliminares & Mediciones en Banco
+          </div>
+          <span class="text-[10px] text-slate-400">Inspección de ingreso</span>
+        </div>
+
+        <div class="space-y-3">
+          <div id="dtlChecklistWrapper" class="hidden">
+            <span class="text-slate-400 block text-[11px] font-semibold mb-1.5">Checklist Funcional (Estado al Recibirse):</span>
+            <div id="dtlChecklistPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div id="dtlTelemetryWrapper" class="hidden pt-2 border-t border-slate-800/70">
+            <span class="text-amber-400 block text-[11px] font-semibold mb-1.5"><i class="fas fa-microchip mr-1"></i>Mediciones de Precisión del Laboratorio:</span>
+            <div id="dtlTelemetryGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen Financiero y Saldo a Liquidar -->
+      <div class="bg-gradient-to-br from-sky-950/40 via-slate-900/60 to-emerald-950/40 border border-sky-500/30 rounded-3xl p-5 sm:p-6 glow-card">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/80">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-receipt text-sky-400"></i>
+            <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-white">Resumen de Cuenta del Servicio</h3>
+          </div>
+          <span class="text-[11px] text-slate-400">Moneda: MXN</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center sm:text-left">
+          
+          <div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800">
+            <span class="text-[11px] text-slate-400 block font-medium">Presupuesto Estimado</span>
+            <strong id="dtlEstCost" class="text-lg font-black text-white mt-0.5 block">$0.00</strong>
+          </div>
+
+          <div class="p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800">
+            <span class="text-[11px] text-slate-400 block font-medium">Anticipo Ya Cubierto</span>
+            <strong id="dtlAdvCost" class="text-lg font-black text-sky-400 mt-0.5 block">$0.00</strong>
+          </div>
+
+          <div class="p-3.5 bg-amber-950/30 rounded-2xl border border-amber-500/40">
+            <span class="text-[11px] text-amber-300 block font-bold uppercase tracking-wider">Saldo por Liquidar</span>
+            <strong id="dtlBalCost" class="text-xl font-black text-amber-400 mt-0.5 block">$0.00</strong>
+          </div>
+
+        </div>
+
+        <!-- Tarjeta Desplegable: Liquidación por Transferencia Bancaria (SPEI) -->
+        <div id="bankPaymentBox" class="hidden mt-4 pt-4 border-t border-slate-800/80">
+          <div class="bg-slate-950/90 border border-sky-500/30 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs font-bold text-white">
+                <i class="fas fa-building-columns text-sky-400"></i>
+                <span>Liquidar por Transferencia SPEI (Sin Esperas al Recoger)</span>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">Pago Inmediato</span>
+            </div>
+
+            <p class="text-xs text-slate-300">
+              Puedes transferir tu saldo pendiente para agilizar la entrega en mostrador:
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+              <div>
+                <span class="text-slate-500 block text-[10px] uppercase font-bold">Banco:</span>
+                <strong id="bankNameText" class="text-white font-semibold">BBVA México</strong>
+              </div>
+              <div>
+                <span class="text-slate-500 block text-[10px] uppercase font-bold">Beneficiario:</span>
+                <strong id="bankHolderText" class="text-white font-semibold">GlitchLab Reparaciones</strong>
+              </div>
+              <div class="sm:col-span-2 flex items-center justify-between bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                <div>
+                  <span class="text-slate-500 block text-[10px] uppercase font-bold">CLABE Interbancaria (18 dígitos):</span>
+                  <strong id="bankClabeText" class="text-amber-300 font-mono text-sm tracking-wider font-bold">012560015893248102</strong>
+                </div>
+                <button 
+                  type="button" 
+                  onclick="copyBankClabe()" 
+                  id="btnCopyClabe"
+                  class="px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg text-xs font-bold transition flex items-center gap-1.5 active:scale-95"
+                >
+                  <i class="far fa-copy"></i>
+                  <span>Copiar CLABE</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-1">
+              <a 
+                id="btnSendPaymentProof" 
+                href="#" 
+                target="_blank" 
+                class="px-3.5 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition flex items-center gap-1.5"
+              >
+                <i class="fab fa-whatsapp text-emerald-400"></i>
+                <span>Enviar Comprobante por WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta Destacada de Garantía Oficial de 45 Días (Cuando el equipo ya fue entregado) -->
+      <div id="warrantyOfficialBanner" class="hidden bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-slate-900 border border-emerald-500/40 rounded-3xl p-5 glow-card space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg shadow">
+              <i class="fas fa-shield-halved"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-extrabold text-white">Póliza de Garantía Oficial GlitchLab (45 Días)</h4>
+              <p id="warrantyTimeRemainingText" class="text-xs text-emerald-300 font-medium"></p>
+            </div>
+          </div>
+          <span id="warrantyStatusChip" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-700">
+            Vigente
+          </span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed border-t border-slate-800/80 pt-2.5">
+          Tu servicio cuenta con <strong>45 días de cobertura por escrito</strong> a partir de la fecha de entrega en el componente o procedimiento reparado. Ante cualquier anomalía técnica, acude al taller con tu número de orden para atención prioritaria sin costo adicional.
+        </p>
+      </div>
+
+      <!-- Tarjeta de Aprobación Digital de Presupuesto (Visible cuando está en Diagnóstico / Presupuesto) -->
+      <div id="budgetApprovalSection" class="hidden bg-gradient-to-r from-amber-950/40 via-slate-900/80 to-slate-900 border border-amber-500/40 rounded-3xl p-5 sm:p-6 glow-card space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+            <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-300">
+              Autorización Formal de Presupuesto
+            </h3>
+          </div>
+          <span id="budgetApprovalStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300">
+            Pendiente de tu visto bueno
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Nuestros ingenieros han determinado el procedimiento necesario para tu equipo. Por favor confirma si autorizas el presupuesto de <strong id="budgetApprovalAmount" class="text-white">$0.00</strong> para dar inicio a la reparación de microelectrónica.
+        </p>
+
+        <!-- Botones de Aprobación / Rechazo -->
+        <div id="budgetApprovalButtons" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+          <button 
+            type="button" 
+            onclick="handleClientBudgetDecision('approved')" 
+            class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 active:scale-95"
+          >
+            <i class="fas fa-check-circle"></i>
+            <span>✅ Autorizar Presupuesto e Iniciar Reparación</span>
+          </button>
+          <button 
+            type="button" 
+            onclick="handleClientBudgetDecision('rejected')" 
+            class="py-3 px-4 rounded-2xl bg-slate-900 hover:bg-red-950/40 border border-slate-700 hover:border-red-500/50 text-slate-300 hover:text-red-300 font-semibold text-xs transition flex items-center justify-center gap-2 active:scale-95"
+          >
+            <i class="fas fa-xmark"></i>
+            <span>❌ No Autorizar (Deseo Recogerlo)</span>
+          </button>
+        </div>
+
+        <!-- Mensaje de Confirmación ya registrada -->
+        <div id="budgetApprovalNotice" class="hidden p-3 bg-emerald-950/40 border border-emerald-500/40 rounded-2xl text-xs text-emerald-300 flex items-center gap-2">
+          <i class="fas fa-circle-check text-base text-emerald-400"></i>
+          <span id="budgetApprovalNoticeText">¡Presupuesto autorizado con éxito! El taller ha recibido tu visto bueno.</span>
+        </div>
+      </div>
+
+      <!-- Galería de Evidencia Fotográfica (Microscopio / Desarme) -->
+      <div id="photosSection" class="hidden bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 text-white text-xs sm:text-sm font-bold uppercase tracking-wider">
+            <i class="fas fa-camera text-sky-400"></i>
+            <span>Evidencia Fotográfica del Procedimiento</span>
+          </div>
+          <span id="dtlPhotoCount" class="text-xs text-sky-400 font-bold bg-sky-950/80 px-2.5 py-0.5 rounded-full border border-sky-800">0 fotos</span>
+        </div>
+
+        <p class="text-xs text-slate-400">
+          Haz clic en cualquier imagen para abrirla en alta resolución y ver el detalle de los componentes intervenidos.
+        </p>
+
+        <div id="dtlPhotoGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+      </div>
+
+      <!-- Historial de Bitácora / Procedimientos Realizados -->
+      <div id="bitacoraSection" class="hidden bg-[#0b101e] border border-slate-800/90 rounded-3xl p-5 sm:p-6 space-y-4">
+        <div class="flex items-center gap-2 text-white text-xs sm:text-sm font-bold uppercase tracking-wider">
+          <i class="fas fa-clock-rotate-left text-sky-400"></i>
+          <span>Bitácora de Procedimientos Realizados</span>
+        </div>
+
+        <div id="dtlBitacoraTimeline" class="space-y-3"></div>
+      </div>
+
+      <!-- Botón de Contacto Directo WhatsApp para esta Orden -->
+      <div class="pt-2 text-center">
+        <a 
+          id="btnOrderWhatsApp" 
+          href="#" 
+          target="_blank" 
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-950 transition active:scale-95"
+        >
+          <i class="fab fa-whatsapp text-base"></i>
+          <span>¿Tienes dudas sobre esta reparación? Escríbenos por WhatsApp</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- TARJETA CON INFORMACIÓN OFICIAL DEL TALLER -->
+    <section class="bg-slate-950/70 border border-slate-800/80 rounded-3xl p-5 sm:p-6 space-y-4 text-xs text-slate-400">
+      <div class="flex items-center gap-2 text-white text-xs font-bold uppercase tracking-wider">
+        <i class="fas fa-store text-sky-400"></i> Información Oficial de GlitchLab
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-slate-300">
+        <div>
+          <span class="text-slate-500 block text-[10px] uppercase font-bold">Dirección:</span>
+          <p id="shopAddressText" class="mt-0.5">Calle Uruapan #2, Villas de la Paz, 63198 Tepic, Nay.</p>
+          <div class="flex items-center gap-2 mt-2">
+            <a 
+              id="btnGoogleMaps" 
+              href="https://maps.google.com/?q=Calle+Uruapan+2,+Villas+de+la+Paz,+63198+Tepic,+Nayarit" 
+              target="_blank" 
+              class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-400 hover:text-white border border-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+            >
+              <i class="fas fa-location-dot text-rose-400"></i> Google Maps
+            </a>
+            <a 
+              id="btnWaze" 
+              href="https://waze.com/ul?q=Calle+Uruapan+2,+Villas+de+la+Paz,+Tepic" 
+              target="_blank" 
+              class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-sky-400 hover:text-white border border-slate-700 text-[10px] font-bold transition flex items-center gap-1 active:scale-95"
+            >
+              <i class="fab fa-waze text-sky-400"></i> Waze GPS
+            </a>
+          </div>
+        </div>
+        <div>
+          <span class="text-slate-500 block text-[10px] uppercase font-bold">Teléfono & WhatsApp:</span>
+          <p id="shopPhoneText" class="mt-0.5 text-sky-300 font-semibold">+52 311 339 6969</p>
+          <div class="mt-2">
+            <span class="text-[10px] text-slate-500">Atención telefónica directa en horario de taller</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 block text-[10px] uppercase font-bold">Horario de Atención:</span>
+            <span id="shopOpenStatusBadge" class="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800">
+              ● Verificando...
+            </span>
+          </div>
+          <p id="shopScheduleText" class="mt-0.5 text-slate-300 leading-snug">Lun a Vie: 9:00 AM - 7:00 PM<br>Sáb: 10:00 AM - 2:00 PM<br><span class="text-rose-400/90 font-medium">Dom: Cerrado</span></p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800/60 text-[11px] text-slate-500 text-justify leading-relaxed flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+        <span>* Para retirar tu equipo una vez terminado es indispensable presentar tu número de folio o comprobante digital y liquidar cualquier saldo pendiente.</span>
+        <span class="font-bold text-sky-400 shrink-0">🛡️ Póliza de 45 días de garantía oficial</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LIGHTBOX / VISOR DE FOTOS EN ALTA RESOLUCIÓN -->
+  <div id="imageLightbox" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 hidden backdrop-blur-sm" onclick="closeLightbox()">
+    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-10 right-0 text-white text-2xl hover:text-sky-400 transition">
+        <i class="fas fa-xmark"></i>
+      </button>
+      <img id="lightboxImg" src="" alt="Zoom" class="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl border border-slate-800">
+      <p id="lightboxCaption" class="text-xs sm:text-sm font-semibold text-slate-200 mt-3 text-center"></p>
+    </div>
+  </div>
+
+  <!-- Footer (Barra Inferior Destacada) -->
+  <footer class="border-t border-slate-800/90 py-6 text-center text-xs text-slate-400 bg-[#030712] shadow-2xl mt-auto">
+    <div class="flex items-center justify-center gap-2 mb-1">
+      <i class="fas fa-microchip text-sky-400"></i>
+      <span class="font-bold text-slate-300">GlitchLab</span>
+      <span>• Especialistas en Microelectrónica & Reparación de Laptops</span>
+    </div>
+    <p>© 2026 GlitchLab. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- LÓGICA DE RASTREO Y CONEXIÓN SUPABASE -->
+  <script>
+    const CONFIG = {
+      supabaseUrl: 'https://afknnllubatfpmzeryrn.supabase.co',
+      supabaseAnonKey: 'sb_publishable_I5zi2yxOUUKinRm2BjSiGA_PKH5W9hU',
+      shopPhone: '3113396969'
+    };
+
+    const StatusMeta = {
+      received: { label: 'Recibido', color: 'bg-blue-950 text-blue-300 border-blue-800', step: 1, percent: '20%' },
+      diagnostic: { label: 'En Diagnóstico', color: 'bg-amber-950 text-amber-300 border-amber-800', step: 2, percent: '40%' },
+      in_progress: { label: 'En Reparación', color: 'bg-sky-950 text-sky-300 border-sky-800', step: 3, percent: '60%' },
+      waiting_parts: { label: 'Espera de Repuesto', color: 'bg-orange-950 text-orange-300 border-orange-800', step: 3, percent: '50%' },
+      ready: { label: '¡Listo para Entrega!', color: 'bg-emerald-950 text-emerald-300 border-emerald-700 animate-pulse', step: 4, percent: '85%' },
+      delivered: { label: 'Entregado al Cliente', color: 'bg-slate-800 text-slate-300 border-slate-700', step: 5, percent: '100%' },
+      cancelled: { label: 'Cancelado', color: 'bg-red-950 text-red-300 border-red-800', step: 0, percent: '0%' }
+    };
+
+    let currentOrder = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Cargar datos del taller si existen en localStorage
+      loadShopInfo();
+
+      // 2. Revisar si la URL trae un parámetro de folio o hash
+      checkUrlParams();
+    });
+
+    function loadShopInfo() {
+      try {
+        const saved = localStorage.getItem('glitchlab_shop_config');
+        if (saved) {
+          const cfg = JSON.parse(saved);
+          if (cfg.address) document.getElementById('shopAddressText').innerText = cfg.address;
+          if (cfg.phone) {
+            document.getElementById('shopPhoneText').innerText = cfg.phone;
+            const clean = cfg.phone.replace(/\D/g, '');
+            CONFIG.shopPhone = clean;
+            document.getElementById('btnHeaderWhatsApp').href = `https://wa.me/52${clean}`;
+          }
+          if (cfg.schedule) document.getElementById('shopScheduleText').innerText = cfg.schedule;
+        }
+      } catch (e) {
+        console.warn('Error leyendo configuración del taller:', e);
+      }
+    }
+
+    async function checkUrlParams() {
+      // Soportar ?phone=311..., ?tel=311..., o ?folio=1, ?id=1
+      const params = new URLSearchParams(window.location.search);
+      let phoneParam = params.get('phone') || params.get('tel');
+      let folioParam = params.get('folio') || params.get('id');
+
+      if (!phoneParam && !folioParam && window.location.hash) {
+        const hash = window.location.hash.replace(/^#track=/, '').replace(/^#/, '').trim();
+        if (hash) {
+          if (hash.replace(/\D/g, '').length >= 7) phoneParam = hash;
+          else folioParam = hash;
+        }
+      }
+
+      if (phoneParam) {
+        document.getElementById('inputFolio').value = phoneParam;
+        searchOrder(phoneParam);
+      } else if (folioParam) {
+        // Si el cliente escaneó el QR con ?folio=1, buscar directamente la orden para conveniencia del QR físico del ticket
+        const cleanFolio = folioParam.replace(/^#/, '').trim();
+        const loading = document.getElementById('loadingState');
+        if (loading) loading.classList.remove('hidden');
+        try {
+          const headers = {
+            'apikey': CONFIG.supabaseAnonKey,
+            'Authorization': `Bearer ${CONFIG.supabaseAnonKey}`
+          };
+          let res = await fetch(`${CONFIG.supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(cleanFolio)}&select=*`, { headers });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+              const ord = mapSupabaseToLocal(data[0]);
+              currentOrder = ord;
+              if (ord.client?.phone) {
+                document.getElementById('inputFolio').value = ord.client.phone;
+                saveRecentPhone(ord.client.phone.replace(/\D/g, ''), ord.equipment?.model || ord.equipment?.type);
+              }
+              renderOrderView(ord);
+              if (loading) loading.classList.add('hidden');
+              document.getElementById('resultContainer').classList.remove('hidden');
+              return;
+            }
+          }
+        } catch (_) {}
+
+        // Fallback a localStorage
+        try {
+          const localSaved = localStorage.getItem('glitchlab_orders');
+          if (localSaved) {
+            const list = JSON.parse(localSaved);
+            const ord = list.find(o => o.id.toString() === cleanFolio);
+            if (ord) {
+              currentOrder = ord;
+              if (ord.client?.phone) {
+                document.getElementById('inputFolio').value = ord.client.phone;
+                saveRecentPhone(ord.client.phone.replace(/\D/g, ''), ord.equipment?.model || ord.equipment?.type);
+              }
+              renderOrderView(ord);
+              if (loading) loading.classList.add('hidden');
+              document.getElementById('resultContainer').classList.remove('hidden');
+              return;
+            }
+          }
+        } catch (_) {}
+
+        if (loading) loading.classList.add('hidden');
+        document.getElementById('notFoundState').classList.remove('hidden');
+      }
+    }
+
+    function handleSearch(e) {
+      e.preventDefault();
+      const val = document.getElementById('inputFolio').value.trim();
+      if (!val) return;
+      searchOrder(val);
+    }
+
+    async function searchOrder(query, directOrderId = null) {
+      const loading = document.getElementById('loadingState');
+      const notFound = document.getElementById('notFoundState');
+      const result = document.getElementById('resultContainer');
+      const multiState = document.getElementById('multiOrdersState');
+
+      loading.classList.remove('hidden');
+      notFound.classList.add('hidden');
+      result.classList.add('hidden');
+      if (multiState) multiState.classList.add('hidden');
+
+      const cleanQuery = query.toString().trim().replace(/^#/, '');
+      const cleanPhone = cleanQuery.replace(/\D/g, '');
+
+      let matchedOrders = [];
+
+      // 1. Consultar en Supabase Cloud REST
+      try {
+        const headers = {
+          'apikey': CONFIG.supabaseAnonKey,
+          'Authorization': `Bearer ${CONFIG.supabaseAnonKey}`
+        };
+
+        // Si parece un ID directo y viene especificado
+        if (directOrderId) {
+          let resId = await fetch(`${CONFIG.supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(directOrderId)}&select=*`, { headers });
+          if (resId.ok) {
+            const dataId = await resId.json();
+            if (Array.isArray(dataId) && dataId.length > 0) {
+              matchedOrders = dataId.map(o => mapSupabaseToLocal(o));
+            }
+          }
+        }
+
+        // Búsqueda general en la base de datos
+        if (matchedOrders.length === 0) {
+          let res = await fetch(`${CONFIG.supabaseUrl}/rest/v1/orders?select=*`, { headers });
+          if (res.ok) {
+            const allOrders = await res.json();
+            const mapped = allOrders.map(o => mapSupabaseToLocal(o));
+
+            // Si tiene 7 o más dígitos, buscar por teléfono
+            if (cleanPhone.length >= 7) {
+              matchedOrders = mapped.filter(o => {
+                const p = (o.client?.phone || '').replace(/\D/g, '');
+                if (!p) return false;
+                return p.endsWith(cleanPhone) || cleanPhone.endsWith(p) || p === cleanPhone;
+              });
+            }
+
+            // Si no encontró por teléfono (o el usuario ingresó un folio de orden ej: 1, 2)
+            if (matchedOrders.length === 0 && cleanQuery) {
+              matchedOrders = mapped.filter(o => o.id.toString() === cleanQuery);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Error consultando Supabase REST:', err);
+      }
+
+      // 2. Fallback / Complemento en localStorage si no hubo red o es local
+      if (matchedOrders.length === 0) {
+        try {
+          const localSaved = localStorage.getItem('glitchlab_orders');
+          if (localSaved) {
+            const list = JSON.parse(localSaved);
+            if (cleanPhone.length >= 7) {
+              matchedOrders = list.filter(o => {
+                const p = (o.client?.phone || '').replace(/\D/g, '');
+                return p && (p.endsWith(cleanPhone) || cleanPhone.endsWith(p) || p === cleanPhone);
+              });
+            }
+            if (matchedOrders.length === 0 && cleanQuery) {
+              matchedOrders = list.filter(o => (o.id || '').toString().replace(/^#/, '').trim() === cleanQuery);
+            }
+          }
+        } catch (e) {
+          console.warn('Error leyendo localStorage:', e);
+        }
+      }
+
+      loading.classList.add('hidden');
+
+      if (matchedOrders.length === 0) {
+        const nfTitle = document.getElementById('notFoundTitle');
+        const nfDesc = document.getElementById('notFoundDesc');
+        if (nfTitle) nfTitle.innerText = 'No encontramos equipos con estos datos';
+        if (nfDesc) nfDesc.innerHTML = `No encontramos ninguna orden para <strong>${escapeHtml(query)}</strong>. Asegúrate de ingresar tu número de teléfono registrado (ej: 3111234567) o tu número de orden (#1).`;
+        notFound.classList.remove('hidden');
+        return;
+      }
+
+      // Si se especificó un ID directo (ej: el usuario eligió uno de sus equipos)
+      if (directOrderId) {
+        const chosen = matchedOrders.find(o => o.id.toString() === directOrderId.toString());
+        if (chosen) {
+          currentOrder = chosen;
+          renderOrderView(chosen);
+          saveRecentPhone(cleanPhone, chosen.equipment?.model || chosen.equipment?.type);
+          result.classList.remove('hidden');
+          result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+      }
+
+      // Si tiene exactamente 1 equipo registrado con su teléfono
+      if (matchedOrders.length === 1) {
+        currentOrder = matchedOrders[0];
+        renderOrderView(matchedOrders[0]);
+        saveRecentPhone(cleanPhone, matchedOrders[0].equipment?.model || matchedOrders[0].equipment?.type);
+        result.classList.remove('hidden');
+        result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      // Si tiene MÚLTIPLES equipos registrados con su teléfono: Mostrar selector interactivo
+      if (multiState) {
+        const countEl = document.getElementById('multiOrdersCount');
+        const listEl = document.getElementById('multiOrdersList');
+        if (countEl) countEl.innerText = `${matchedOrders.length} equipos`;
+        if (listEl) {
+          listEl.innerHTML = matchedOrders.map(o => {
+            const meta = StatusMeta[o.status] || StatusMeta.received;
+            const eqTitle = `${o.equipment?.type || 'Equipo'} ${o.equipment?.brand || ''} ${o.equipment?.model || ''}`.trim();
+            const dateStr = new Date(o.date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' });
+            return `
+              <div 
+                onclick="searchOrder('${cleanPhone}', '${o.id}')"
+                class="bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-sky-500 rounded-2xl p-4 cursor-pointer transition flex flex-col justify-between group active:scale-98"
+              >
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono text-xs font-bold text-sky-400">Orden #${o.id}</span>
+                    <span class="text-[10px] text-slate-500 font-mono">${dateStr}</span>
+                  </div>
+                  <h4 class="text-sm font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1">${escapeHtml(eqTitle)}</h4>
+                  <p class="text-xs text-slate-400 mt-1 line-clamp-1 italic font-medium">"${escapeHtml(o.issue || 'Sin falla')}"</p>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between">
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-300">
+                    <span class="w-2 h-2 rounded-full ${meta.color.split(' ')[0]}"></span> ${meta.label}
+                  </span>
+                  <span class="text-xs font-bold text-sky-400 group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                    Ver Estado <i class="fas fa-chevron-right text-[10px]"></i>
+                  </span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+        multiState.classList.remove('hidden');
+        multiState.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function mapSupabaseToLocal(row) {
+      return {
+        id: row.id,
+        date: row.date || row.created_at,
+        deliveredDate: row.delivered_date,
+        warrantyDays: row.warranty_days || 30,
+        status: row.status || 'received',
+        client: row.client || {},
+        equipment: row.equipment || {},
+        issue: row.issue || '',
+        initialDiagnosis: row.initial_diagnosis || '',
+        technician: row.technician || 'Especialista GlitchLab',
+        costs: row.costs || {},
+        photos: row.photos || [],
+        bitacora: row.bitacora || []
+      };
+    }
+
+    function renderOrderView(order) {
+      // 1. Datos básicos
+      document.getElementById('dtlFolio').innerText = order.id;
+      document.getElementById('dtlClientName').innerText = order.client?.name || 'Cliente';
+      
+      const dateFormatted = new Date(order.date).toLocaleDateString('es-MX', {
+        day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      document.getElementById('dtlDate').innerText = dateFormatted;
+      document.getElementById('dtlTechnician').innerText = order.technician || 'Ing. Rivera';
+
+      // Cálculo de tiempo en taller y fecha de entrega
+      const isDelivered = order.status === 'delivered';
+      const startDate = new Date(order.date);
+      const endDate = (isDelivered && order.deliveredDate && !isNaN(new Date(order.deliveredDate).getTime()))
+        ? new Date(order.deliveredDate)
+        : new Date();
+      const diffMs = Math.max(0, endDate.getTime() - startDate.getTime());
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      let stayLabel = '';
+      if (diffDays === 0) {
+        stayLabel = isDelivered ? (hours <= 1 ? 'Entregado el mismo día (<1h)' : `Entregado el mismo día (${hours}h)`) : (hours <= 1 ? 'Hoy (<1h en taller)' : `Hoy (${hours}h en taller)`);
+      } else if (diffDays === 1) {
+        stayLabel = isDelivered ? 'Estancia: 1 día' : '1 día en taller';
+      } else {
+        stayLabel = isDelivered ? `Estancia total: ${diffDays} días` : `${diffDays} días en taller`;
+      }
+
+      const stayBadge = document.getElementById('dtlWorkshopStayBadge');
+      if (stayBadge) {
+        stayBadge.innerHTML = `<i class="fas fa-stopwatch text-[9px]"></i><span>${stayLabel}</span>`;
+      }
+
+      const deliveredBadge = document.getElementById('dtlDeliveredDateBadge');
+      if (deliveredBadge) {
+        if (isDelivered && order.deliveredDate) {
+          const delDate = new Date(order.deliveredDate);
+          if (!isNaN(delDate.getTime())) {
+            const delDateStr = delDate.toLocaleDateString('es-MX', {
+              day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+            deliveredBadge.classList.remove('hidden');
+            deliveredBadge.innerHTML = `<i class="fas fa-calendar-check text-[9px]"></i><span>Entregado: ${delDateStr}</span>`;
+          } else {
+            deliveredBadge.classList.add('hidden');
+          }
+        } else {
+          deliveredBadge.classList.add('hidden');
+        }
+      }
+
+      // 2. Estatus & Stepper
+      const meta = StatusMeta[order.status] || StatusMeta.received;
+      document.getElementById('dtlStatusBadge').innerHTML = `
+        <span class="px-3 py-1 rounded-full text-xs font-bold border ${meta.color}">
+          ${meta.label}
+        </span>
+      `;
+
+      // Barra de progreso y pasos
+      document.getElementById('dtlProgressPercent').innerText = meta.percent;
+      document.getElementById('dtlProgressBar').style.width = meta.percent;
+
+      // Resetear clases de pasos
+      const steps = ['received', 'diagnostic', 'in_progress', 'ready', 'delivered'];
+      steps.forEach((st, idx) => {
+        const el = document.getElementById(`step-${st}`);
+        if (!el) return;
+        const iconDiv = el.querySelector('.step-icon');
+        const textSpan = el.querySelector('span');
+        
+        if (idx + 1 <= meta.step) {
+          iconDiv.className = 'step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center text-xs font-bold shadow-lg shadow-sky-500/20';
+          textSpan.className = 'text-[10px] sm:text-xs font-bold text-sky-400';
+        } else {
+          iconDiv.className = 'step-icon w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-500';
+          textSpan.className = 'text-[10px] sm:text-xs font-medium text-slate-500';
+        }
+      });
+
+      // 3. Garantía Oficial (45 Días por Defecto)
+      const wBadge = document.getElementById('dtlWarrantyBadge');
+      const wBanner = document.getElementById('warrantyOfficialBanner');
+      const wRemainingText = document.getElementById('warrantyTimeRemainingText');
+      const wStatusChip = document.getElementById('warrantyStatusChip');
+
+      if (order.status === 'delivered') {
+        const delDate = order.deliveredDate ? new Date(order.deliveredDate) : new Date(order.date);
+        const wDays = order.warrantyDays || 45; // 45 días por política GlitchLab
+        const expiry = new Date(delDate.getTime() + wDays * 86400000);
+        const now = new Date();
+        const diff = Math.ceil((expiry - now) / 86400000);
+        const expiryFormatted = expiry.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        if (diff > 0) {
+          if (wBadge) wBadge.innerHTML = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700 shadow-sm"><i class="fas fa-shield-halved"></i> Garantía Vigente (${diff} días restantes)</span>`;
+          if (wBanner) {
+            wBanner.classList.remove('hidden');
+            wBanner.className = 'bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-slate-900 border border-emerald-500/40 rounded-3xl p-5 glow-card space-y-3';
+            if (wRemainingText) wRemainingText.innerText = `Le restan ${diff} días de cobertura oficial (Vence el ${expiryFormatted}).`;
+            if (wStatusChip) {
+              wStatusChip.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-700';
+              wStatusChip.innerText = `🟢 Vigente (${diff}d)`;
+            }
+          }
+        } else {
+          if (wBadge) wBadge.innerHTML = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">Garantía concluida (${expiryFormatted})</span>`;
+          if (wBanner) {
+            wBanner.classList.remove('hidden');
+            wBanner.className = 'bg-slate-950/60 border border-slate-800 rounded-3xl p-5 space-y-3';
+            if (wRemainingText) wRemainingText.innerText = `El período de cobertura de 45 días concluyó el ${expiryFormatted}.`;
+            if (wStatusChip) {
+              wStatusChip.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800';
+              wStatusChip.innerText = 'Concluida';
+            }
+          }
+        }
+      } else {
+        if (wBadge) wBadge.innerHTML = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sky-950/70 text-sky-300 border border-sky-800/60"><i class="fas fa-shield-halved text-[9px] mr-1"></i>45 días de garantía al entregarse</span>`;
+        if (wBanner) wBanner.classList.add('hidden');
+      }
+
+      // 4. Dispositivo & Falla
+      const eqType = order.equipment?.type || 'Equipo';
+      const eqBrand = order.equipment?.brand || '';
+      const eqModel = order.equipment?.model || '';
+      document.getElementById('dtlEquipmentTitle').innerText = `${eqType} ${eqBrand} ${eqModel}`.trim();
+      document.getElementById('dtlEquipmentSerial').innerText = order.equipment?.serial ? `No. de Serie / IMEI: ${order.equipment.serial}` : 'No. de Serie: No especificado';
+      
+      const acc = order.equipment?.accessories;
+      document.getElementById('dtlAccessories').innerText = (Array.isArray(acc) && acc.length > 0) ? acc.join(', ') : 'Solo el equipo (sin accesorios adicionales)';
+
+      document.getElementById('dtlIssue').innerText = order.issue || 'Sin falla especificada en recepción.';
+      document.getElementById('dtlDiagnosis').innerText = order.initialDiagnosis || 'El equipo se encuentra actualmente bajo revisión y mediciones en laboratorio.';
+
+      // 4.5. Checklist Funcional & Telemetría en Banco
+      renderReceptionAndTelemetry(order);
+
+      // 5. Costos & Desglose Financiero
+      const estNum = Number(order.costs?.estimated) || 0;
+      const advNum = Number(order.costs?.advance) || 0;
+      const balNum = Number(order.costs?.balance) || 0;
+
+      const est = estNum.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+      const adv = advNum.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+      const bal = balNum.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+
+      document.getElementById('dtlEstCost').innerText = `$${est}`;
+      document.getElementById('dtlAdvCost').innerText = `$${adv}`;
+      document.getElementById('dtlBalCost').innerText = `$${bal}`;
+
+      // Desplegable de Transferencia Bancaria (visible si hay saldo pendiente por liquidar o equipo listo)
+      const bankBox = document.getElementById('bankPaymentBox');
+      if (bankBox) {
+        if (balNum > 0 || order.status === 'ready') {
+          bankBox.classList.remove('hidden');
+          const btnProof = document.getElementById('btnSendPaymentProof');
+          if (btnProof) {
+            const proofMsg = encodeURIComponent(`Hola GlitchLab, adjunto mi comprobante de pago por transferencia SPEI para la orden #${order.id} (${eqBrand} ${eqModel}) por el monto de $${bal} MXN.`);
+            btnProof.href = `https://wa.me/52${CONFIG.shopPhone}?text=${proofMsg}`;
+          }
+        } else {
+          bankBox.classList.add('hidden');
+        }
+      }
+
+      // 6. Fotos
+      const photos = order.photos || [];
+      const photosSection = document.getElementById('photosSection');
+      const photoGrid = document.getElementById('dtlPhotoGrid');
+      const photoCount = document.getElementById('dtlPhotoCount');
+
+      if (photos.length > 0) {
+        photoCount.innerText = `${photos.length} foto(s)`;
+        photoGrid.innerHTML = photos.map(p => `
+          <div class="group relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 cursor-pointer aspect-video" onclick="openLightbox('${p.url}', '${escapeHtml(p.caption || 'Evidencia técnica')}')">
+            <img src="${p.url}" alt="${escapeHtml(p.caption || 'Foto')}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+              <span class="text-[10px] text-white font-medium truncate">${escapeHtml(p.caption || 'Ver foto')}</span>
+            </div>
+          </div>
+        `).join('');
+        photosSection.classList.remove('hidden');
+      } else {
+        photosSection.classList.add('hidden');
+      }
+
+      // 7. Bitácora con Mediciones de Microelectrónica
+      const bitacora = order.bitacora || [];
+      const bitacoraSection = document.getElementById('bitacoraSection');
+      const bitacoraTimeline = document.getElementById('dtlBitacoraTimeline');
+
+      if (bitacora.length > 0) {
+        bitacoraTimeline.innerHTML = bitacora.map(log => {
+          const logDate = new Date(log.date).toLocaleDateString('es-MX', {
+            day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+          });
+          const telem = log.telemetry;
+          const hasTelem = telem && (telem.amperage || telem.voltageRail || telem.components);
+          return `
+            <div class="p-3.5 bg-slate-950/70 border border-slate-800 rounded-2xl space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <strong class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <i class="fas fa-screwdriver text-sky-400 text-[10px]"></i>
+                  ${escapeHtml(log.title)}
+                </strong>
+                <span class="text-[10px] text-slate-500 font-mono">${logDate}</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(log.notes)}</p>
+              ${hasTelem ? `
+                <div class="mt-2 pt-2 border-t border-slate-900 grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[10.5px] font-mono">
+                  ${telem.amperage ? `<span class="text-sky-300 bg-sky-950/50 px-2 py-0.5 rounded border border-sky-900/60">⚡ ${escapeHtml(telem.amperage)}</span>` : ''}
+                  ${telem.voltageRail ? `<span class="text-amber-300 bg-amber-950/50 px-2 py-0.5 rounded border border-amber-900/60">⚡ ${escapeHtml(telem.voltageRail)}</span>` : ''}
+                  ${telem.components ? `<span class="text-emerald-300 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-900/60">🔬 ${escapeHtml(telem.components)}</span>` : ''}
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+        bitacoraSection.classList.remove('hidden');
+      } else {
+        bitacoraSection.classList.add('hidden');
+      }
+
+      // 8. Sección de Autorización Digital de Presupuesto
+      renderBudgetApprovalSection(order);
+
+      // 9. Botón WhatsApp Personalizado
+      const btnWA = document.getElementById('btnOrderWhatsApp');
+      const waText = encodeURIComponent(`Hola GlitchLab, estoy consultando el estatus de mi orden #${order.id} (${order.equipment?.brand || ''} ${order.equipment?.model || ''}). ¿Podrían darme más detalles?`);
+      btnWA.href = `https://wa.me/52${CONFIG.shopPhone}?text=${waText}`;
+
+      // 10. Guardar en historial de consultas recientes en el navegador
+      if (order.client?.phone) {
+        saveRecentPhone(order.client.phone.replace(/\D/g, ''), `${order.equipment?.brand || ''} ${order.equipment?.model || ''}`.trim());
+      }
+
+      // 11. Actualizar estampa de tiempo
+      const timeEl = document.getElementById('lastUpdatedTime');
+      if (timeEl) {
+        timeEl.innerText = `Actualizado: ${new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}`;
+      }
+    }
+
+    function renderBudgetApprovalSection(order) {
+      const section = document.getElementById('budgetApprovalSection');
+      if (!section) return;
+
+      const est = order.costs?.estimated || 0;
+      const decision = order.budgetDecision || null; // { status: 'approved' | 'rejected', date: ISO }
+
+      // Mostrar cuando está en diagnóstico o espera de repuesto o ya tiene decisión registrada
+      if ((order.status === 'diagnostic' || order.status === 'waiting_parts' || decision) && est > 0) {
+        section.classList.remove('hidden');
+        document.getElementById('budgetApprovalAmount').innerText = `$${est.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN`;
+
+        const buttonsDiv = document.getElementById('budgetApprovalButtons');
+        const noticeDiv = document.getElementById('budgetApprovalNotice');
+        const noticeText = document.getElementById('budgetApprovalNoticeText');
+        const badge = document.getElementById('budgetApprovalStatusBadge');
+
+        if (decision?.status === 'approved') {
+          buttonsDiv.classList.add('hidden');
+          noticeDiv.className = 'p-3 bg-emerald-950/60 border border-emerald-500/50 rounded-2xl text-xs text-emerald-300 flex items-center gap-2';
+          noticeDiv.classList.remove('hidden');
+          const dDate = new Date(decision.date).toLocaleString('es-MX', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+          noticeText.innerHTML = `<strong>✅ Presupuesto Autorizado por el cliente:</strong> ${dDate}. Nuestros técnicos están trabajando en tu equipo.`;
+          badge.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300';
+          badge.innerText = 'Autorizado';
+        } else if (decision?.status === 'rejected') {
+          buttonsDiv.classList.add('hidden');
+          noticeDiv.className = 'p-3 bg-red-950/60 border border-red-500/50 rounded-2xl text-xs text-red-300 flex items-center gap-2';
+          noticeDiv.classList.remove('hidden');
+          noticeText.innerHTML = `<strong>❌ No autorizaste la reparación:</strong> El equipo está disponible para entrega sin costo de mano de obra en taller.`;
+          badge.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-300';
+          badge.innerText = 'Rechazado';
+        } else {
+          buttonsDiv.classList.remove('hidden');
+          noticeDiv.classList.add('hidden');
+          badge.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300';
+          badge.innerText = 'Esperando tu aprobación';
+        }
+      } else {
+        section.classList.add('hidden');
+      }
+    }
+
+    async function handleClientBudgetDecision(choice) {
+      if (!currentOrder) return;
+
+      const choiceText = choice === 'approved' ? '¿Confirmas la AUTORIZACIÓN del presupuesto?' : '¿Confirmas que NO deseas autorizar la reparación?';
+      if (!confirm(choiceText)) return;
+
+      const nowIso = new Date().toISOString();
+      const decisionObj = {
+        status: choice,
+        date: nowIso,
+        amount: currentOrder.costs?.estimated || 0
+      };
+
+      currentOrder.budgetDecision = decisionObj;
+
+      // Si aprueba, avanzar status a en reparación si estaba en diagnóstico
+      if (choice === 'approved' && currentOrder.status === 'diagnostic') {
+        currentOrder.status = 'in_progress';
+      }
+
+      // Agregar a bitácora de la orden
+      if (!currentOrder.bitacora) currentOrder.bitacora = [];
+      currentOrder.bitacora.unshift({
+        id: 'bit_' + Date.now(),
+        date: nowIso,
+        title: choice === 'approved' ? 'Presupuesto Autorizado por el Cliente' : 'Presupuesto Rechazado por el Cliente',
+        notes: choice === 'approved' 
+          ? `El cliente autorizó el presupuesto de $${decisionObj.amount} MXN desde el portal de rastreo web.`
+          : `El cliente decidió no autorizar la cotización de $${decisionObj.amount} MXN desde el portal de rastreo.`,
+        technician: 'Portal Cliente',
+        status: currentOrder.status
+      });
+
+      // 1. Guardar en Supabase Cloud si está conectado
+      try {
+        const headers = {
+          'apikey': CONFIG.supabaseAnonKey,
+          'Authorization': `Bearer ${CONFIG.supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        };
+
+        await fetch(`${CONFIG.supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(currentOrder.id)}`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            status: currentOrder.status,
+            bitacora: currentOrder.bitacora,
+            costs: currentOrder.costs,
+            client_decision: decisionObj,
+            updated_at: nowIso
+          })
+        });
+      } catch (e) {
+        console.warn('Error sincronizando decisión a Supabase:', e);
+      }
+
+      // 2. Guardar en localStorage si está en el mismo navegador
+      try {
+        const localSaved = localStorage.getItem('glitchlab_orders');
+        if (localSaved) {
+          const list = JSON.parse(localSaved);
+          const idx = list.findIndex(o => o.id === currentOrder.id);
+          if (idx >= 0) {
+            list[idx].budgetDecision = decisionObj;
+            list[idx].status = currentOrder.status;
+            list[idx].bitacora = currentOrder.bitacora;
+            localStorage.setItem('glitchlab_orders', JSON.stringify(list));
+          }
+        }
+      } catch (err) {}
+
+      // Re-renderizar vista
+      renderOrderView(currentOrder);
+
+      // Enviar aviso opcional a WhatsApp de taller
+      const waNotice = encodeURIComponent(`Hola GlitchLab, he ${choice === 'approved' ? 'AUTORIZADO ✅' : 'RECHAZADO ❌'} el presupuesto de mi orden #${currentOrder.id} en su página de rastreo.`);
+      window.open(`https://wa.me/52${CONFIG.shopPhone}?text=${waNotice}`, '_blank');
+    }
+
+    function openLightbox(url, caption) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightboxCaption').innerText = caption;
+      document.getElementById('imageLightbox').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('imageLightbox').classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Formatear números telefónicos en grupos legibles (ej: 311 339 6969) para evitar confusión con números repetidos
+    function formatPhoneNumber(phone) {
+      if (!phone) return '';
+      const str = phone.toString().trim();
+      const digits = str.replace(/\D/g, '');
+      if (digits.length === 10) {
+        return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 10)}`;
+      } else if (digits.length === 12 && digits.startsWith('52')) {
+        return `+52 ${digits.slice(2, 5)} ${digits.slice(5, 8)} ${digits.slice(8, 12)}`;
+      } else if (digits.length === 7) {
+        return `${digits.slice(0, 3)} ${digits.slice(3, 7)}`;
+      } else if (digits.length > 6) {
+        return digits.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+      }
+      return str;
+    }
+
+    // ==========================================
+    // NUEVAS FUNCIONES DE EXPERIENCIA & VALOR
+    // ==========================================
+
+    // 1. Renderizar Checklist Funcional y Mediciones de Laboratorio
+    function renderReceptionAndTelemetry(order) {
+      const card = document.getElementById('receptionDetailsCard');
+      const chkWrapper = document.getElementById('dtlChecklistWrapper');
+      const chkPills = document.getElementById('dtlChecklistPills');
+      const telWrapper = document.getElementById('dtlTelemetryWrapper');
+      const telGrid = document.getElementById('dtlTelemetryGrid');
+
+      const checks = order.equipment?.functionalCheck || [];
+      const hasChecks = Array.isArray(checks) && checks.length > 0;
+
+      // Buscar mediciones en bitácora más reciente
+      let latestTelem = null;
+      if (Array.isArray(order.bitacora)) {
+        for (const log of order.bitacora) {
+          if (log.telemetry && (log.telemetry.amperage || log.telemetry.voltageRail || log.telemetry.components)) {
+            latestTelem = log.telemetry;
+            break;
+          }
+        }
+      }
+
+      if (hasChecks || latestTelem) {
+        card.classList.remove('hidden');
+
+        if (hasChecks) {
+          chkWrapper.classList.remove('hidden');
+          chkPills.innerHTML = checks.map(c => `
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-950/80 text-sky-300 border border-sky-800">
+              <i class="fas fa-check text-[9px] text-emerald-400"></i> ${escapeHtml(c)}
+            </span>
+          `).join('');
+        } else {
+          chkWrapper.classList.add('hidden');
+        }
+
+        if (latestTelem) {
+          telWrapper.classList.remove('hidden');
+          telGrid.innerHTML = `
+            ${latestTelem.amperage ? `<div class="p-2 bg-slate-950 rounded-xl border border-slate-800"><span class="text-slate-500 block text-[9.5px] uppercase">⚡ Amperaje / Consumo:</span><strong class="text-sky-300 font-mono">${escapeHtml(latestTelem.amperage)}</strong></div>` : ''}
+            ${latestTelem.voltageRail ? `<div class="p-2 bg-slate-950 rounded-xl border border-slate-800"><span class="text-slate-500 block text-[9.5px] uppercase">⚡ Riel de Voltaje:</span><strong class="text-amber-300 font-mono">${escapeHtml(latestTelem.voltageRail)}</strong></div>` : ''}
+            ${latestTelem.components ? `<div class="p-2 bg-slate-950 rounded-xl border border-slate-800"><span class="text-slate-500 block text-[9.5px] uppercase">🔬 IC / Componente:</span><strong class="text-emerald-300 font-mono">${escapeHtml(latestTelem.components)}</strong></div>` : ''}
+          `;
+        } else {
+          telWrapper.classList.add('hidden');
+        }
+      } else {
+        card.classList.add('hidden');
+      }
+    }
+
+    // 2. Copiar CLABE Interbancaria al Portapapeles
+    function copyBankClabe() {
+      const clabeEl = document.getElementById('bankClabeText');
+      const btn = document.getElementById('btnCopyClabe');
+      const clabe = clabeEl ? clabeEl.innerText.trim() : '012560015893248102';
+
+      navigator.clipboard.writeText(clabe).then(() => {
+        if (btn) {
+          btn.innerHTML = '<i class="fas fa-check text-emerald-400"></i><span>¡Copiada!</span>';
+          btn.className = 'px-3 py-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-lg text-xs font-bold transition flex items-center gap-1.5';
+          setTimeout(() => {
+            btn.innerHTML = '<i class="far fa-copy"></i><span>Copiar CLABE</span>';
+            btn.className = 'px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg text-xs font-bold transition flex items-center gap-1.5 active:scale-95';
+          }, 2500);
+        }
+      }).catch(() => {
+        prompt('Copia la cuenta CLABE:', clabe);
+      });
+    }
+
+    // 3. Descarga de Comprobante Digital del Cliente en PDF
+    function downloadClientDigitalPDF() {
+      if (!currentOrder) return;
+      const order = currentOrder;
+
+      const dateStr = new Date(order.date).toLocaleDateString('es-MX', {
+        day: '2-digit', month: 'long', year: 'numeric'
+      });
+      const meta = StatusMeta[order.status] || StatusMeta.received;
+      const trackingUrl = `https://rastreo.glitchlab.mx/?folio=${order.id}`;
+
+      // Crear contenedor temporal para renderizar el PDF
+      const pdfWrapper = document.createElement('div');
+      pdfWrapper.style.position = 'fixed';
+      pdfWrapper.style.left = '-9999px';
+      pdfWrapper.style.top = '0';
+      pdfWrapper.style.width = '794px'; // A4 standard width en 96dpi
+      pdfWrapper.style.padding = '35px';
+      pdfWrapper.style.background = '#ffffff';
+      pdfWrapper.style.color = '#0f172a';
+      pdfWrapper.style.fontFamily = 'Arial, sans-serif';
+      pdfWrapper.style.boxSizing = 'border-box';
+
+      const est = (order.costs?.estimated || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+      const adv = (order.costs?.advance || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+      const bal = (order.costs?.balance || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 });
+
+      pdfWrapper.innerHTML = `
+        <div style="border-bottom: 3px solid #0284c7; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h1 style="margin: 0; font-size: 26px; font-weight: 900; color: #0284c7; letter-spacing: 0.5px;">GLITCHLAB</h1>
+            <p style="margin: 2px 0 0 0; font-size: 11px; color: #475569; font-weight: bold;">LABORATORIO DE MICROELECTRÓNICA & COMPUTADORAS</p>
+            <p style="margin: 3px 0 0 0; font-size: 10px; color: #64748b;">Calle Uruapan #2, Villas de la Paz, Tepic, Nay. • Tel: +52 311 339 6969</p>
+          </div>
+          <div style="text-align: right;">
+            <div style="display: inline-block; background: #0284c7; color: #ffffff; padding: 6px 16px; border-radius: 8px; font-size: 20px; font-weight: 900; font-family: monospace;">
+              ORDEN #${order.id}
+            </div>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #475569;">Fecha: <strong>${dateStr}</strong></p>
+            <p style="margin: 2px 0 0 0; font-size: 11px; color: #0284c7; font-weight: bold;">Estatus: ${meta.label.toUpperCase()}</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 18px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-size: 11px;">
+            <strong style="color: #0284c7; text-transform: uppercase; display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: 0.5px;">1. Datos del Cliente</strong>
+            <div><strong>Cliente:</strong> ${escapeHtml(order.client?.name || '')}</div>
+            <div><strong>Teléfono:</strong> ${escapeHtml(formatPhoneNumber(order.client?.phone) || '')}</div>
+            ${order.client?.address ? `<div><strong>Domicilio:</strong> ${escapeHtml(order.client.address)}</div>` : ''}
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-size: 11px;">
+            <strong style="color: #0284c7; text-transform: uppercase; display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: 0.5px;">2. Equipo Recibido</strong>
+            <div><strong>Equipo:</strong> ${escapeHtml(order.equipment?.brand || '')} ${escapeHtml(order.equipment?.model || '')} (${escapeHtml(order.equipment?.type || 'Equipo')})</div>
+            <div><strong>No. Serie:</strong> ${escapeHtml(order.equipment?.serial || 'N/A')}</div>
+            <div><strong>Accesorios:</strong> ${escapeHtml(Array.isArray(order.equipment?.accessories) ? order.equipment.accessories.join(', ') : 'Solo equipo')}</div>
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 18px; font-size: 11px;">
+          <strong style="color: #0284c7; text-transform: uppercase; display: block; margin-bottom: 6px; font-size: 10px;">3. Falla Reportada & Diagnóstico</strong>
+          <p style="margin: 0 0 6px 0;"><strong>Falla Reportada:</strong> "${escapeHtml(order.issue || 'No especificada')}"</p>
+          <p style="margin: 0; color: #334155;"><strong>Diagnóstico Preliminar:</strong> ${escapeHtml(order.initialDiagnosis || 'En proceso de revisión por los especialistas de laboratorio.')}</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: #ffffff; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; font-size: 12px;">
+          <div>Presupuesto: <strong>$${est} MXN</strong></div>
+          <div>Anticipo Cubierto: <strong style="color: #38bdf8;">$${adv} MXN</strong></div>
+          <div style="font-size: 14px;">Saldo Pendiente: <strong style="color: #fbbf24;">$${bal} MXN</strong></div>
+        </div>
+
+        <div style="border-top: 1.5px dashed #cbd5e1; padding-top: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div style="max-width: 500px; font-size: 9px; color: #64748b; line-height: 1.4;">
+            <p style="margin: 0 0 4px 0;"><strong>PÓLIZA DE GARANTÍA OFICIAL:</strong> Todo servicio concluido cuenta con <strong>45 días de garantía por escrito</strong> en la reparación o componente reemplazado.</p>
+            <p style="margin: 0;">Rastrea el progreso en tiempo real las 24 horas escaneando el código QR adjunto con la cámara de tu celular.</p>
+          </div>
+          <div style="text-align: center;">
+            <div id="pdfQrCodePlaceholder" style="width: 85px; height: 85px; margin: 0 auto;"></div>
+            <span style="display: block; font-size: 8px; font-weight: bold; margin-top: 3px; color: #0284c7;">RASTREO EN VIVO</span>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(pdfWrapper);
+
+      // Generar código QR dinámico dentro del PDF
+      const qrEl = pdfWrapper.querySelector('#pdfQrCodePlaceholder');
+      if (qrEl && window.QRCode) {
+        new QRCode(qrEl, {
+          text: trackingUrl,
+          width: 85,
+          height: 85,
+          colorDark: '#0f172a',
+          colorLight: '#ffffff'
+        });
+      }
+
+      setTimeout(() => {
+        const opt = {
+          margin: 10,
+          filename: `GlitchLab_Comprobante_Orden_${order.id}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        if (window.html2pdf) {
+          window.html2pdf().from(pdfWrapper).set(opt).save().then(() => {
+            document.body.removeChild(pdfWrapper);
+          }).catch(err => {
+            console.error('Error generando PDF:', err);
+            document.body.removeChild(pdfWrapper);
+            window.print();
+          });
+        } else {
+          document.body.removeChild(pdfWrapper);
+          window.print();
+        }
+      }, 200);
+    }
+
+    // 4. Actualización en Vivo y Polling Inteligente
+    let autoRefreshInterval = null;
+
+    function refreshCurrentOrder() {
+      if (!currentOrder) return;
+      const spinIcon = document.getElementById('refreshIcon');
+      if (spinIcon) spinIcon.classList.add('fa-spin');
+      const phone = (currentOrder.client?.phone || '').replace(/\D/g, '');
+      searchOrder(phone, currentOrder.id).finally(() => {
+        setTimeout(() => {
+          if (spinIcon) spinIcon.classList.remove('fa-spin');
+        }, 600);
+      });
+    }
+
+    function startAutoPolling() {
+      if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+      // Consultar cada 45 segundos en segundo plano si la orden sigue activa
+      autoRefreshInterval = setInterval(() => {
+        if (currentOrder && currentOrder.status !== 'delivered' && currentOrder.status !== 'cancelled') {
+          searchOrderSilently(currentOrder.id.toString());
+        }
+      }, 45000);
+    }
+
+    async function searchOrderSilently(query) {
+      if (!query) return;
+      try {
+        const headers = {
+          'apikey': CONFIG.supabaseAnonKey,
+          'Authorization': `Bearer ${CONFIG.supabaseAnonKey}`
+        };
+        const res = await fetch(`${CONFIG.supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(query)}&select=*`, { headers });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            currentOrder = mapSupabaseToLocal(data[0]);
+            renderOrderView(currentOrder);
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 5. Historial de Teléfonos Recientes Guardados en Navegador
+    function saveRecentPhone(phone, equipmentName) {
+      if (!phone || phone.length < 7) return;
+      try {
+        const key = 'glitchlab_recent_phones';
+        let recents = JSON.parse(localStorage.getItem(key) || '[]');
+        recents = recents.filter(r => r.phone !== phone);
+        recents.unshift({ phone: phone, name: equipmentName || 'Mi Equipo', date: Date.now() });
+        recents = recents.slice(0, 3); // Guardar máximo 3
+        localStorage.setItem(key, JSON.stringify(recents));
+        renderRecentPhones();
+      } catch (_) {}
+    }
+
+    function renderRecentPhones() {
+      const container = document.getElementById('recentOrdersContainer');
+      const chips = document.getElementById('recentOrdersChips');
+      if (!container || !chips) return;
+
+      try {
+        const recents = JSON.parse(localStorage.getItem('glitchlab_recent_phones') || '[]');
+        if (recents.length > 0) {
+          container.classList.remove('hidden');
+          chips.innerHTML = recents.map(r => `
+            <button 
+              type="button" 
+              onclick="selectRecentPhone('${escapeHtml(r.phone)}')" 
+              class="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 text-[11px] font-bold text-sky-300 hover:text-white transition flex items-center gap-1.5 active:scale-95 font-mono"
+            >
+              <i class="fas fa-phone-volume text-[10px] text-sky-400"></i>
+              <span>${escapeHtml(formatPhoneNumber(r.phone))}</span>
+              ${r.name ? `<span class="text-slate-500 font-sans font-normal truncate max-w-[90px]">(${escapeHtml(r.name)})</span>` : ''}
+            </button>
+          `).join('');
+        } else {
+          container.classList.add('hidden');
+        }
+      } catch (_) {
+        container.classList.add('hidden');
+      }
+    }
+
+    function selectRecentPhone(phone) {
+      const input = document.getElementById('inputFolio');
+      if (input) input.value = phone;
+      searchOrder(phone);
+    }
+
+    // 5. Cálculo Dinámico de Horario de Taller
+    function updateShopOpenStatus() {
+      const badge = document.getElementById('shopOpenStatusBadge');
+      if (!badge) return;
+
+      const now = new Date();
+      const day = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+      const hour = now.getHours();
+      const min = now.getMinutes();
+      const timeInMinutes = hour * 60 + min;
+
+      let isOpen = false;
+      let label = 'Cerrado Hoy';
+
+      if (day === 0) {
+        // Domingo: Cerrado todo el día
+        isOpen = false;
+        label = 'Cerrado Hoy (Domingo)';
+      } else if (day === 6) {
+        // Sábado: 10:00 AM a 2:00 PM (14:00)
+        const openMin = 10 * 60;
+        const closeMin = 14 * 60;
+        if (timeInMinutes >= openMin && timeInMinutes < closeMin) {
+          isOpen = true;
+          label = 'Abierto Ahora (Hasta 2:00 PM)';
+        } else {
+          isOpen = false;
+          label = timeInMinutes < openMin ? 'Abre a las 10:00 AM' : 'Cerrado por Hoy';
+        }
+      } else {
+        // Lunes a Viernes: 9:00 AM a 7:00 PM (19:00)
+        const openMin = 9 * 60;
+        const closeMin = 19 * 60;
+        if (timeInMinutes >= openMin && timeInMinutes < closeMin) {
+          isOpen = true;
+          label = 'Abierto Ahora (Hasta 7:00 PM)';
+        } else {
+          isOpen = false;
+          label = timeInMinutes < openMin ? 'Abre a las 9:00 AM' : 'Cerrado por Hoy';
+        }
+      }
+
+      if (isOpen) {
+        badge.className = 'text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 flex items-center gap-1.5 shadow-sm';
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ● ${label}`;
+      } else {
+        badge.className = 'text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-rose-950/80 text-rose-400 border border-rose-800/80 flex items-center gap-1.5 shadow-sm';
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ● ${label}`;
+      }
+    }
+
+    // Inicializar listeners adicionales en el inicio
+    document.addEventListener('DOMContentLoaded', () => {
+      renderRecentPhones();
+      startAutoPolling();
+      updateShopOpenStatus();
+      setInterval(updateShopOpenStatus, 60000); // Re-evaluar cada minuto
+    });
+  </script>
+</body>
+</html>
