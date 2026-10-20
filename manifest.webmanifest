@@ -1,0 +1,20 @@
+{
+  "name": "GlitchLab - Rastreo de Reparaciones",
+  "short_name": "GlitchLab",
+  "description": "Portal oficial para consultar el diagnóstico, estatus y fotos de tu equipo en tiempo real.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070c18",
+  "theme_color": "#070c18",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
